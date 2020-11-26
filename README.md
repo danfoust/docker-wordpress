@@ -41,3 +41,17 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
 ```
+
+### Node / NPM
+```bash
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - \
+  && apt-get install -y nodejs gcc g++ make
+```
+
+### Yarn
+```bash
+RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+  && apt-get update  \
+  && apt-get install yarn
+```
