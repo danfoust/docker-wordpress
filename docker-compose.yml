@@ -1,0 +1,59 @@
+version: '3.8'
+
+networks:
+  nginx-wordpress-mysql-network:
+
+services:
+  mysql_service:
+    container_name: mysql_container
+    build:
+      context: ./mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    networks:
+      - nginx-wordpress-mysql-network
+    expose:
+      - '3306'
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: wordpress
+
+  wordpress_service:
+    container_name: wordpress_container
+    build:
+      context: ./wordpress
+    restart: always
+    volumes:
+      - ./site:/var/www/html
+    depends_on:
+      - mysql_service
+    networks:
+      - nginx-wordpress-mysql-network
+    environment:
+      WORDPRESS_DB_HOST: mysql_service
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+
+  nginx_service:
+    container_name: nginx_container
+    build:
+      context: ./nginx
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - wordpress_service
+      - mysql_service
+    networks:
+      - nginx-wordpress-mysql-network
+    volumes:
+      - ./site:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+volumes:
+  site:

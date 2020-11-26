@@ -1,0 +1,4 @@
+mysql/data
+
+site/*
+!site/.gitkeep
